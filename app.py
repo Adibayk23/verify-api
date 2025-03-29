@@ -1,7 +1,11 @@
-from flask import Flask, request, jsonify
+import os
 import joblib
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
+
+# Print files in the directory to check if models exist
+print("Files in the current directory:", os.listdir(os.getcwd()))
 
 # Load trained models
 fake_profile_model = joblib.load("fake_profile_model.pkl")
@@ -28,3 +32,4 @@ def predict_review():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
