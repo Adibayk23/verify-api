@@ -1,35 +1,47 @@
-import os
-import joblib
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-# Print files in the directory to check if models exist
-print("Files in the current directory:", os.listdir(os.getcwd()))
-
-# Load trained models
-fake_profile_model = joblib.load("fake_profile_model.pkl")
-harmful_comment_model = joblib.load("harmful_comment_rf_model.pkl")
-fake_review_model = joblib.load("fake_review_detector.pkl")
+# Home route to check if API is running
+@app.route("/", methods=["GET"])
+def home():
+    return jsonify({"message": "Verify API is running!"})
 
 @app.route("/predict_profile", methods=["POST"])
 def predict_profile():
-    data = request.json["features"]
-    prediction = fake_profile_model.predict([data])
-    return jsonify({"fake_profile": int(prediction[0])})
+    try:
+        data = request.json
+        print("Received data:", data)  # Debugging print
+        if not data or "features" not in data:
+            return jsonify({"error": "No features provided"}), 400
+        return jsonify({"fake_profile": 1})  # Dummy response
+    except Exception as e:
+        print("Error:", str(e))  # Debugging print
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/predict_comment", methods=["POST"])
 def predict_comment():
-    data = request.json["text"]
-    prediction = harmful_comment_model.predict([data])
-    return jsonify({"harmful_comment": int(prediction[0])})
+    try:
+        data = request.json
+        print("Received data:", data)  # Debugging print
+        if not data or "text" not in data:
+            return jsonify({"error": "No text provided"}), 400
+        return jsonify({"harmful_comment": 1})  # Dummy response
+    except Exception as e:
+        print("Error:", str(e))  # Debugging print
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/predict_review", methods=["POST"])
 def predict_review():
-    data = request.json["text"]
-    prediction = fake_review_model.predict([data])
-    return jsonify({"fake_review": int(prediction[0])})
+    try:
+        data = request.json
+        print("Received data:", data)  # Debugging print
+        if not data or "text" not in data:
+            return jsonify({"error": "No text provided"}), 400
+        return jsonify({"fake_review": 0})  # Dummy response
+    except Exception as e:
+        print("Error:", str(e))  # Debugging print
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(debug=True)
-
+    app.run(debug=True, host="0.0.0.0", port=10000)
